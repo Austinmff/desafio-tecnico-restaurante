@@ -1,25 +1,20 @@
 spring:
-  application:
-    name: almocovotacao
-
   datasource:
-    url: jdbc:h2:mem:almocodb
+    url: jdbc:h2:mem:almocovotacao
     driver-class-name: org.h2.Driver
     username: sa
     password:
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
   h2:
     console:
       enabled: true
       path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 server:
   port: 8080
