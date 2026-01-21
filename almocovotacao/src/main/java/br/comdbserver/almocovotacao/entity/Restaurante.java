@@ -13,16 +13,13 @@ public class Restaurante {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    //  CONSTRUTOR VAZIO (OBRIGATÓRIO PARA JPA)
-    public Restaurante() {
+    protected Restaurante() {
     }
 
-    //  CONSTRUTOR COM ARGUMENTO
     public Restaurante(String nome) {
         this.nome = nome;
     }
 
-    //  GETTERS
     public Long getId() {
         return id;
     }
@@ -31,7 +28,6 @@ public class Restaurante {
         return nome;
     }
 
-    //  SETTERS
     public void setNome(String nome) {
         this.nome = nome;
     }

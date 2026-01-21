@@ -39,57 +39,43 @@ public class VotacaoService {
 
         LocalDate hoje = LocalDate.now();
 
-        // 1️) Profissional existe
-        Profissional profissional = profissionalRepository.findById(profissionalId)
-                .orElseThrow(() -> new IllegalArgumentException("Profissional não encontrado"));
-
-        // 2️) Um voto por dia
+        // 1 voto por dia por profissional
         if (votoRepository.findByProfissionalIdAndDataVoto(profissionalId, hoje).isPresent()) {
             throw new IllegalStateException("Profissional já votou hoje");
         }
 
-        // 3️) Restaurante (cria se não existir)
+        Profissional profissional = profissionalRepository.findById(profissionalId)
+                .orElseThrow(() -> new IllegalArgumentException("Profissional não encontrado"));
+
         Restaurante restaurante = restauranteRepository.findByNome(nomeRestaurante)
                 .orElseGet(() -> restauranteRepository.save(new Restaurante(nomeRestaurante)));
 
-        // 4️) Restaurante não pode repetir na semana
-        validarRestauranteNaSemana(restaurante.getId(), hoje);
-
-        // 5️) Salva voto
-        votoRepository.save(new Voto(profissional, restaurante, hoje));
+        Voto voto = new Voto(profissional, restaurante, hoje);
+        votoRepository.save(voto);
     }
+
 
     // =========================
     // RESULTADO DO DIA
     // =========================
-    public ResultadoVotacaoResponse obterResultadoDoDia() {
-
+    public ResultadoVotacaoResponse resultadoDoDia() {
         LocalDate hoje = LocalDate.now();
-        List<Voto> votosHoje = votoRepository.findAllByDataVoto(hoje);
-
-        if (votosHoje.isEmpty()) {
-            throw new IllegalStateException("Nenhuma votação registrada hoje");
-        }
+        List<Voto> votos = votoRepository.findAllByDataVoto(hoje);
 
         Map<Restaurante, Long> contagem =
-                votosHoje.stream()
-                        .collect(Collectors.groupingBy(
-                                Voto::getRestaurante,
-                                Collectors.counting()
-                        ));
+                votos.stream()
+                        .collect(Collectors.groupingBy(Voto::getRestaurante, Collectors.counting()));
 
-        Map.Entry<Restaurante, Long> vencedor =
-                contagem.entrySet()
-                        .stream()
-                        .max(Map.Entry.comparingByValue())
-                        .orElseThrow();
+        Restaurante vencedor = contagem.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElseThrow(() -> new IllegalStateException("Nenhum voto para hoje"))
+                .getKey();
 
-        return new ResultadoVotacaoResponse(
-                vencedor.getKey().getId(),
-                vencedor.getKey().getNome(),
-                vencedor.getValue().intValue()
-        );
+        Long total = contagem.get(vencedor);
+
+        return new ResultadoVotacaoResponse(vencedor.getId(), vencedor.getNome(), total.intValue());
     }
+
 
     // =========================
     // REGRAS AUXILIARES

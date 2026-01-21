@@ -23,18 +23,15 @@ public class Voto {
     @Column(nullable = false)
     private LocalDate dataVoto;
 
-    //  CONSTRUTOR VAZIO
-    public Voto() {
+    protected Voto() {
     }
 
-    //  CONSTRUTOR COM 3 ARGUMENTOS
     public Voto(Profissional profissional, Restaurante restaurante, LocalDate dataVoto) {
         this.profissional = profissional;
         this.restaurante = restaurante;
         this.dataVoto = dataVoto;
     }
 
-    //  GETTERS (ESSENCIAIS)
     public Long getId() {
         return id;
     }
@@ -50,6 +47,5 @@ public class Voto {
     public LocalDate getDataVoto() {
         return dataVoto;
     }
-
 }
 

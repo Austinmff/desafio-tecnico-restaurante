@@ -13,7 +13,8 @@ public class Profissional {
     @Column(nullable = false)
     private String nome;
 
-    public Profissional() {
+    //  OBRIGATÓRIO para o JPA
+    protected Profissional() {
     }
 
     public Profissional(String nome) {
